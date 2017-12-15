@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemalocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- 本章中大多数示例使用XML来制定在Spring容器中生成每个BeanDefinition的配置元数据。上一节演示了如何通过源代码注解提供
+    大量的配置元数据。然而，即使在这些示例中，注解也仅仅用于驱动依赖注入，"base"bean依然是明确在XML文件中定义。本节介绍通过
+    扫描类路径隐式检测候选组件的选项。候选者组件是class类，这些类经过过滤匹配，由Spring容器注册的bean定义，成为Spring bean
+    这消除了使用XML执行bean注册的需要；而是可以使用注解（例如@Component），AspectJ类型表达式或你自己的子定义过滤条件来选择
+    将在容器中注册bean定义-->
+    <!-- 从Spring 3.0开始，Spring JavaConfig项目提供的许多功能都是Spring Framework核心的一部分。这允许你使用Java而不是使用
+    传统的XML文件来定义bean。可以看@Configuration,@Bean,@Import,@DependsOn注解，以了解如何使用这些新特性的例子。-->
+
+    <!-- @Component和各构造型注解-->
+    <!-- @Repository注解是满足存储库（也称为数据访问对象或DAO）的角色。此注解的使用会自动装换异常，如第16.2.2
+    节"Exception translation"所述-->
+    <!-- Spring提供了更多的构造型注解：@Component,@Service和@Controller。@Component可用于管理任何Spring的组件。@Repository
+    ,@Service,@Controller是@Component用于指定用例的特殊形式，用于具体的用例，例如，服务和表现层。因此，你可以使用@Component
+    注解你的组件类，但是通过使用@Repository，@Service或@Controller来注解它们，能够让你的类更易于被合适的工具处理或与切面关
+    联。例如，这些注解可以使目标组件成为切入点。在Spring框架的未来版本中，@Repository，@Service和@Controller也可能带有附加
+    的语义。因此，如果你在使用@Component或@Service来选择服务层，@Service显然是更好的选择。同理，在持久层要选择@Repository，
+    它能自动转换异常。-->
+
+    <!-- 3.10.2 Meta-annotations 元注解-->
+    <!-- Spring提供的许多注解可以在你自己的代码中用作元注解，元注解即一种可用于别的注解之上的简单的注解。例如，上面提到的
+    @Service注解@Component的元注解：
+    @Target({ElementType.Type})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    @Component
+    public @interface Service {
+
+    }-->
+    <!-- 元注解也可以组合创建组合注解。例如，来自Spring MVC的@RestController注解是@Controller和@ResponseBody组成的。此外，
+    组合注解也可以重新定义来自元注解的属性。这在只想暴露元注解的部分属性值的时候非常有用。例如，Spring的@SessionScope注解
+    将它的作用域硬编码为session，但仍允许自定义proxyMode。
+    @Target({ElementType.TYPE, ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    @Scope(WebApplicationContext.SCOPE_SESSION)
+    public @interface SessionScope {
+        @AliasFor(annotation = Scope.class)
+        ScopedProxyMode prooxyMode() default ScopedProxyMode.TARGET_CLASS;
+    }
+    @SessionScope然后就可以使用了，而且不需要提供proxyMode，如下：
+    @Service
+    @SessionScope
+    public class SessionScopedService {
+        //..
+    }
+    或者重写proxyMode的值，如下所示：
+    @Service
+    @SessionScope(proxyMode = ScopedProxyMode.INTERFACES)
+    public class SessionScopedUserService implements UserService {
+        //..
+    }
+    有关详细信息，请参阅35.Spring Annotation Programming Model
+    -->
+    <beans></beans>
+</beans>
