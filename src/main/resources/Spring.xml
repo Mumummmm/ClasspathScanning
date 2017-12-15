@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemalocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemalocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
     <!-- 本章中大多数示例使用XML来制定在Spring容器中生成每个BeanDefinition的配置元数据。上一节演示了如何通过源代码注解提供
     大量的配置元数据。然而，即使在这些示例中，注解也仅仅用于驱动依赖注入，"base"bean依然是明确在XML文件中定义。本节介绍通过
     扫描类路径隐式检测候选组件的选项。候选者组件是class类，这些类经过过滤匹配，由Spring容器注册的bean定义，成为Spring bean
@@ -55,5 +57,17 @@
     }
     有关详细信息，请参阅35.Spring Annotation Programming Model
     -->
-    <beans></beans>
+
+    <!-- 3.10.3 自动检测类并注册bean定义-->
+    <!-- Spring可以自动检测各代码层的被注解的类，并使用ApplicationContext内注册相应的BeanDefinition。例如，以下两个类就可以
+    被自动探测：-->
+    <!-- 要自动检测这些类并注册相应的bean，需要在@Configuration配置中添加@ComponentScan，其中basePackages属性是两个类的常用
+    父包。（或者，你可以指定包含每个类的父包 逗号、分号、空格分隔列表）-->
+    <!-- 为了简洁，上面可能使用注解的value属性，即@ComponentScan("com.pansy")，也可以使用XML形式的配置-->
+    <context:component-scan base-package="com.pansy"/>
+    <!-- 使用<context:component-scan>隐式地启用<context:annotation-config>的功能。当使用<context:component-scan>时，通常
+    不需要包含<context:annotation-config>-->
+    <!-- 此外，当使用component-scan元素时，"AutowiredAnnotationBeanPostProcessor"和"CommonAnnotationBeanPostProcessor"都
+    会隐式包含，意味着这两个组件也是自动探测和注入的，所有这些都不需要XML配置。通过设置annotation-config属性值为false，即禁
+    用AutowiredAnnotationBeanPostProcessor和CommonAnnotationBeanPostProcessor-->
 </beans>
