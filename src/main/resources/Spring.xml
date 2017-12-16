@@ -64,10 +64,24 @@
     <!-- 要自动检测这些类并注册相应的bean，需要在@Configuration配置中添加@ComponentScan，其中basePackages属性是两个类的常用
     父包。（或者，你可以指定包含每个类的父包 逗号、分号、空格分隔列表）-->
     <!-- 为了简洁，上面可能使用注解的value属性，即@ComponentScan("com.pansy")，也可以使用XML形式的配置-->
-    <context:component-scan base-package="com.pansy"/>
+    <!--<context:component-scan base-package="com.pansy"/>-->
     <!-- 使用<context:component-scan>隐式地启用<context:annotation-config>的功能。当使用<context:component-scan>时，通常
     不需要包含<context:annotation-config>-->
     <!-- 此外，当使用component-scan元素时，"AutowiredAnnotationBeanPostProcessor"和"CommonAnnotationBeanPostProcessor"都
     会隐式包含，意味着这两个组件也是自动探测和注入的，所有这些都不需要XML配置。通过设置annotation-config属性值为false，即禁
     用AutowiredAnnotationBeanPostProcessor和CommonAnnotationBeanPostProcessor-->
+
+    <!-- 3.10.4 使用过滤器自定义扫描-->
+    <!-- 默认情况下，使用@Component,@Service,@Repository,@Controller注解的类或注解为@Component的自定义注解的类才能被检测为
+    候选组件。但是，你可以通过自定义过滤器来修改和扩展行为。将它们添加为@ComponentScan注解的*includeFilters或excludeFilers
+    参数（或作为component-scan元素的include-filter或exclude-filter *子元素）。每个过滤器元素需要type和expression属性。
+    表3.5 过滤器类型，见3.10.4-->
+    <!-- 以下示例显示了忽略所有@Repository注解，并使用带有"stub"的Repository代替。（AppConfig）-->
+    <!-- 或者使用XML形式配置-->
+    <context:component-scan base-package="com.pansy">
+        <context:include-filter type="regex" expression=".*Stub.*Repository"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+    </context:component-scan>
+    <!-- 你还可以通过在注解上设置useDefaultFilters = false或通过use-fault-filters = false作为<component-scan/>元素的属性
+    来禁用默认的过滤器。这将不会自动检测带有@Component,@Repository,@Service,@Controller,或者@Configuration注解的类。-->
 </beans>
