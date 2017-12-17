@@ -142,4 +142,10 @@
     属性，即可实现此目的。它的值有三个选项：no,interfaces,and targetClass,比如下面的配置会生成标准的JDK动态代理。(AppConfig)-->
     <context:component-scan base-package="com.pansy"
                             scoped-proxy="interfaces"/>
+    <!-- @Qualifier注解在第3.9.4节中讨论过了，该部分中的示例演示了在解析自动注入候选者时使用@Qualifier注解和自定义限定符
+    注解以提供细粒度控制。因为这些示例基于XML bean定义，所以使用XML中的bean元素的qualifier或meta子元素在候选bean定义上提
+    供了限定符元数据。当依靠classpath扫描并自动检测组件时，你可以在候选类上提供具有类型界别注解的限定符元数据。
+    （MovieFinderImpl）-->
+    <!-- 和大多数基于注解的替代方法一样，请注意，注解元数据绑定到类定义本身，而使用xml的时候，允许同一类型的beans在qualifier
+    元数据中提供变量，因为元数据是依据实例而不是类来提供的-->
 </beans>
