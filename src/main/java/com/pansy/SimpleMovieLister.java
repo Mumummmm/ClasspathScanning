@@ -3,7 +3,7 @@ package com.pansy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("myMovieLister")
 public class SimpleMovieLister {
     private MovieFinder movieFinder;
 

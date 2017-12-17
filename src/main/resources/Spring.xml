@@ -64,7 +64,7 @@
     <!-- 要自动检测这些类并注册相应的bean，需要在@Configuration配置中添加@ComponentScan，其中basePackages属性是两个类的常用
     父包。（或者，你可以指定包含每个类的父包 逗号、分号、空格分隔列表）-->
     <!-- 为了简洁，上面可能使用注解的value属性，即@ComponentScan("com.pansy")，也可以使用XML形式的配置-->
-    <!--<context:component-scan base-package="com.pansy"/>-->
+    <context:component-scan base-package="com.pansy"/>
     <!-- 使用<context:component-scan>隐式地启用<context:annotation-config>的功能。当使用<context:component-scan>时，通常
     不需要包含<context:annotation-config>-->
     <!-- 此外，当使用component-scan元素时，"AutowiredAnnotationBeanPostProcessor"和"CommonAnnotationBeanPostProcessor"都
@@ -79,8 +79,8 @@
     <!-- 以下示例显示了忽略所有@Repository注解，并使用带有"stub"的Repository代替。（AppConfig）-->
     <!-- 或者使用XML形式配置-->
     <context:component-scan base-package="com.pansy">
-        <context:include-filter type="regex" expression=".*Stub.*Repository"/>
-        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+    <context:include-filter type="regex" expression=".*Stub.*Repository"/>
+    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
     </context:component-scan>
     <!-- 你还可以通过在注解上设置useDefaultFilters = false或通过use-fault-filters = false作为<component-scan/>元素的属性
     来禁用默认的过滤器。这将不会自动检测带有@Component,@Repository,@Service,@Controller,或者@Configuration注解的类。-->
@@ -116,4 +116,30 @@
     最后，请注意，单个类可以为同一个bean保存多个@Bean方法，如根据运用时可用的依赖关系选择合适的工厂方法。使用的算法时选择"最
     贪婪"的构造方法，一些场景可能会按如下方法选择对应的工厂方法：满足最多依赖的会被选择，这与使用@Autowired时选择多个构造方
     法时类似。-->
+
+    <!-- 3.10.6 命名自动注册组件-->
+    <!-- 扫描处理过程其中一部就是自动探测组件，扫描器使用BeanNameGenerator对探测到的组件命名。默认情况下，各代码层注解(
+    @Component,@Service,@Depository,@Controller)所包含的name值，将会作为相应的bean定义的名字。
+    如果这些注解没有name值，或者是其他一些被探测到的组件（比如使用自定义过滤器探测到的），默认的bean name生成器生成，以小写
+    类名作为bean名字。例如，如果检测到以下两个组件，则名称将是myMovieLister,movieFinderImpl。（SimpleMovieLister,MovieFin
+    -derImpl）-->
+    <!-- 如果你不想依赖默认的bean命名策略，你可以提供一个自定义bean命名策略。首先，实现BeanNameGenerator接口，并确保包括一
+    个默认的无参构造函数。然后，在配置扫描程序时提供完全限定类名：（AppConfig）-->
+    <context:component-scan base-package="com.pansy"
+    name-generator="com.pansy.MyNameGenerator"/>
+    <!-- 生成规则应当如下，考虑和注解一起生成name，便于其他组件明确的引用。另一方面，当容器负责组装时，自动生成的名称就足
+    够了。-->
+
+    <!-- 3.10.7 为component-scan组件提供作用域-->
+    <!-- 与Spring管理的组件一样，默认的最常用的作用域是单例Singleton。然而，有时你需要其他的作用域，可以通过@Scope注解来
+    指定。只需在注解中提供作用域的名称。（MovieFinderImpl）-->
+    <!-- 有关特定于Web作用域的详细信息。请参见第3.5.4节-->
+    <!-- 想要自己提供自定义作用域解析的策略，而不是依赖于基于注解的方法，得实现ScopeMetadataResolver接口，并确保包含一个
+    默认的无参构造函数。然后，在配置扫描程序时提供完全限定类名：（AppConfig）-->
+    <context:component-scan base-package="com.pansy"
+                            scope-resolver="com.pansy.MyScopeResolver"/>
+    <!-- 但使用某个非单例作用域时，为作用域对象生成代理也许非常必要。原因看第3.5.4节。component-scan元素中有一个scope-proxy
+    属性，即可实现此目的。它的值有三个选项：no,interfaces,and targetClass,比如下面的配置会生成标准的JDK动态代理。(AppConfig)-->
+    <context:component-scan base-package="com.pansy"
+                            scoped-proxy="interfaces"/>
 </beans>
